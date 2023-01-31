@@ -1,5 +1,12 @@
+using MagicVilla_API.Data;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddDbContext<ApplicationDbContext>(option =>
+{
+    option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultSQLConnection"));
+});
 // Add services to the container.
 
 builder.Services.AddControllers().AddNewtonsoftJson();
