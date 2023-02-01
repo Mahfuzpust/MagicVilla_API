@@ -10,7 +10,7 @@ namespace MagicVilla_API.Models
         public int VillaNo { get; set; }
         public string SpecialDetails { get; set;}
 
-        public DateTime CreatedDate { get; set; }
-        public DateTime UpdatedDate { get; set; }
+        public DateTime CreateDate { get; set; }
+        public DateTime UpdateDate { get; set; }
     }
 }
