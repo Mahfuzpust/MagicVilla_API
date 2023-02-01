@@ -18,12 +18,14 @@ namespace MagicVilla_API.Controllers
     {
         protected APIResponse _response;
         private readonly IVillaNumberRepository _dbVillaNumber;
+        private readonly IVillaRepository _dbVilla;
         private readonly IMapper _mapper;
-        public VillaNumberAPIController(IVillaNumberRepository dbVillaNumber, IMapper mapper)
+        public VillaNumberAPIController(IVillaNumberRepository dbVillaNumber, IMapper mapper, IVillaRepository dbVilla)
         {
             _mapper = mapper;
             _dbVillaNumber = dbVillaNumber;
             this._response = new();
+            _dbVilla = dbVilla;
         }
 
         [HttpGet]
@@ -97,7 +99,14 @@ namespace MagicVilla_API.Controllers
                         ModelState.AddModelError("CustomError! ", "VillaNumber already Exits!!");
                         return BadRequest(ModelState);
                     }
-                    if (createDTO == null)
+
+                    if (await _dbVilla.GetAsync(u => u.Id == createDTO.VillaID) == null)
+                    {
+                        ModelState.AddModelError("CustomError", "Villa ID is Invalid!");
+                        return BadRequest(ModelState);
+                    }
+
+                if (createDTO == null)
                     {
                         return BadRequest(createDTO);
                     }
@@ -163,7 +172,14 @@ namespace MagicVilla_API.Controllers
                     {
                         return BadRequest();
                     }
-                    VillaNumber model = _mapper.Map<VillaNumber>(updateDTO);
+
+                    if (await _dbVilla.GetAsync(u => u.Id == updateDTO.VillaID) == null)
+                    {
+                        ModelState.AddModelError("CustomError", "Villa ID is Invalid!");
+                        return BadRequest(ModelState);
+                    }
+
+                VillaNumber model = _mapper.Map<VillaNumber>(updateDTO);
 
                     await _dbVillaNumber.UpdateAsync(model);
                     _response.StatusCode = HttpStatusCode.NoContent;
